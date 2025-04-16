@@ -1,16 +1,14 @@
 import streamlit as st
 
 # --------------------------
-# Função de cálculo para o TJ/RJ
+# Cálculo detalhado para TJ/RJ
 # --------------------------
 def calcular_custas_rj(valor_causa):
-    # Faixa fixa simulada com base no print enviado
     if valor_causa <= 20000:
         taxa_judiciaria = 820.56
     else:
-        taxa_judiciaria = 820.56  # Até termos faixas superiores
+        taxa_judiciaria = 820.56  # Valor fixo temporário
 
-    # Fundos obrigatórios
     fundperj = round(taxa_judiciaria * 0.05, 2)
     funperj = round(taxa_judiciaria * 0.05, 2)
     funarpen = round(taxa_judiciaria * 0.06, 2)
@@ -26,53 +24,51 @@ def calcular_custas_rj(valor_causa):
     }
 
 # --------------------------
-# Função genérica para SP e PR
+# Faixas oficiais TJ/SP (2024)
+# --------------------------
+def calcular_custas_sp(valor_causa):
+    if valor_causa <= 26640.00:
+        custas = valor_causa * 0.02
+    elif valor_causa <= 88800.00:
+        custas = valor_causa * 0.015
+    else:
+        custas = valor_causa * 0.01
+
+    return round(max(custas, 87.55), 2)
+
+# --------------------------
+# Cálculo genérico
 # --------------------------
 def calcular_custas(uf, tipo_acao, tipo_recurso, valor_causa, gratuidade=False, parte_isenta=False):
     if gratuidade:
         return "✅ Justiça gratuita concedida. Sem custas recursais."
-
     if parte_isenta:
         return "✅ Parte isenta de custas (MP, Fazenda, Defensoria etc.)."
 
     if uf == 'RJ' and tipo_acao == 'Cível' and tipo_recurso == 'Apelação':
         return calcular_custas_rj(valor_causa)
 
-    regras = {
-        'SP': {
-            'Cível': {
-                'Apelação': {
-                    'percentual': 0.03,
-                    'valor_minimo': 87.55,
-                    'unidade': 'Real'
-                }
-            }
-        },
-        'PR': {
-            'Cível': {
-                'Apelação': {
-                    'percentual': 0.02,
-                    'valor_minimo': 94.60,
-                    'unidade': 'Real'
-                }
-            }
-        }
-    }
+    if uf == 'SP' and tipo_acao == 'Cível' and tipo_recurso == 'Apelação':
+        custas = calcular_custas_sp(valor_causa)
+        return f"💰 Custas: R$ {custas:.2f} (base TJ/SP)"
 
-    try:
-        regra = regras[uf][tipo_acao][tipo_recurso]
-        if 'percentual' in regra:
-            valor = max(valor_causa * regra['percentual'], regra['valor_minimo'])
-            return f"💰 Custas: R$ {valor:.2f} ({regra['percentual']*100:.1f}% sobre R$ {valor_causa:.2f})"
-    except KeyError:
-        return "❌ Não há regra cadastrada para essa combinação de UF, ação e recurso."
+    # Exemplo básico para PR
+    if uf == 'PR':
+        custas = max(valor_causa * 0.02, 94.60)
+        return f"💰 Custas: R$ {custas:.2f} (base TJ/PR)"
 
+    return "❌ Não há regra cadastrada para essa combinação."
 
 # --------------------------
-# Interface Streamlit
+# Interface do App
 # --------------------------
 st.set_page_config(page_title="Calculadora de Custas Recursais", layout="centered")
 st.title("🧮 Calculadora de Custas Recursais")
+
+# Botão para reiniciar tudo
+if st.button("🔄 Novo Cálculo"):
+    st.session_state.clear()
+    st.experimental_rerun()
 
 ufs = ['RJ', 'SP', 'PR']
 tipos_acao = ['Cível']
