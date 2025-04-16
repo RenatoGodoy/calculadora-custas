@@ -85,15 +85,16 @@ parte_isenta = st.checkbox("🏛️ Parte Isenta (MP, Fazenda Pública, Defensor
 if st.button("Calcular Custas"):
     resultado = calcular_custas(uf, tipo_acao, tipo_recurso, valor_causa, justica_gratuita, parte_isenta)
 
-if isinstance(resultado, dict):
-    st.success(f"💰 Custas totais: R$ {resultado['TOTAL']:.2f}")
-    st.markdown("### 📄 Detalhamento:")
-    st.write(f"🔹 Atos Sec. TJ: R$ {resultado['Atos Sec. TJ']:.2f}")
-    st.write(f"🔹 FUNDPERJ: R$ {resultado['FUNDPERJ']:.2f}")
-    st.write(f"🔹 FUNPERJ: R$ {resultado['FUNPERJ']:.2f}")
-    st.write(f"🔹 FUNARPEN: R$ {resultado['FUNARPEN']:.2f}")
-elif isinstance(resultado, str):
-    st.success(resultado)
-else:
-    st.warning("❌ Erro ao calcular as custas. Verifique os dados.")
+    if isinstance(resultado, dict):
+        st.success(f"💰 Custas totais: R$ {resultado['TOTAL']:.2f}")
+        st.markdown("### 📄 Detalhamento:")
+        st.write(f"🔹 Atos Sec. TJ: R$ {resultado['Atos Sec. TJ']:.2f}")
+        st.write(f"🔹 FUNDPERJ: R$ {resultado['FUNDPERJ']:.2f}")
+        st.write(f"🔹 FUNPERJ: R$ {resultado['FUNPERJ']:.2f}")
+        st.write(f"🔹 FUNARPEN: R$ {resultado['FUNARPEN']:.2f}")
+    elif isinstance(resultado, str):
+        st.success(resultado)
+    else:
+        st.warning("❌ Erro ao calcular as custas. Verifique os dados.")
+
 
