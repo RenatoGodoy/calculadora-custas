@@ -73,5 +73,5 @@ justica_gratuita = st.checkbox("✅ Justiça Gratuita", key="justica_gratuita")
 parte_isenta = st.checkbox("🏛️ Parte Isenta (MP, Fazenda Pública, Defensoria)", key="parte_isenta")
 
 if st.button("Calcular Custas"):
-    resultado = calcular_custas(uf, tipo_acao, tipo_recurso, valor_causa, gratuidade, parte_isenta)
-    st.success(resultado)
+   resultado = calcular_custas(uf, tipo_acao, tipo_recurso, valor_causa, justica_gratuita, parte_isenta)
+   st.success(resultado)
